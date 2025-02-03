@@ -1,1 +1,7 @@
-# contract-audit-ui
+# Smart Contract Audit UI
+
+```console
+cd audit-ui
+npm install
+npm run dev
+```
