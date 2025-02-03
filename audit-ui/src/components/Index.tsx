@@ -1,3 +1,5 @@
+import Logo from "@/components/Logo";
+
 const APP_NAME = "SmartGuard AI";
 
 export default function Index() {
@@ -6,6 +8,7 @@ export default function Index() {
       <div className="container mx-auto px-4 py-8">
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
+            <Logo />
             <h1 className="text-3xl font-orbitron font-bold text-white">
               {APP_NAME}
             </h1>
