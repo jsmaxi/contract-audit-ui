@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
 
 const ContractInput = () => {
   const [code, setCode] = useState("");
@@ -60,8 +61,18 @@ const ContractInput = () => {
       return;
     }
 
+    if (!url.startsWith("https://github.com/")) {
+      toast({
+        title: "Error",
+        description: "Public GitHub URL must start with https://github.com/",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      const response = ""; //todo url fetch
+      const githubUrl = transformGitHubUrlToApiUrl(url);
+      const response = await fetchUrl(githubUrl);
       setCode(response);
       toast({
         title: "Contract Loaded",
@@ -71,7 +82,7 @@ const ContractInput = () => {
       toast({
         title: "Error",
         description:
-          "Failed to fetch contract from URL. Please check the URL and try again.",
+          "Failed to fetch contract from URL. Please check the public GitHub URL and try again. Example: https://github.com/owner/repository/blob/main/src/contract.some",
         variant: "destructive",
       });
     }
