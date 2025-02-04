@@ -5,6 +5,7 @@ import ContractInput from "./ContractInput";
 import Report from "./Report";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { callApi } from "@/lib/api";
 
 const APP_NAME = "SmartGuard AI";
 
@@ -21,7 +22,7 @@ export default function Index() {
   >(null);
   const [showingPrevious, setShowingPrevious] = useState(false);
 
-  const handleAnalyze = (code: string, model: string) => {
+  const handleAnalyze = async (code: string, model: string) => {
     if (!code?.trim()) {
       toast({
         title: "Error",
@@ -36,24 +37,36 @@ export default function Index() {
     setAnalysisStatus("scanning");
     const startTime = Date.now();
 
-    if (findings.length > 0) {
-      setPreviousFindings(findings);
-      setPreviousAnalysisTime(analysisTime);
+    try {
+      const _ = await callApi(code, model);
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Error",
+        description: "Audit agent call failed",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setTimeout(() => {
-      const mockFindings: any[] = [];
+    //   if (findings.length > 0) {
+    //     setPreviousFindings(findings);
+    //     setPreviousAnalysisTime(analysisTime);
+    //   }
 
-      setFindings(mockFindings);
-      setAnalysisTime((Date.now() - startTime) / 1000);
-      setAnalysisStatus("complete");
-      setShowingPrevious(false);
+    //   setTimeout(() => {
+    //     const mockFindings: any[] = [];
 
-      toast({
-        title: "Analysis Complete",
-        description: `Your smart contract has been analyzed successfully`,
-      });
-    }, 3000);
+    //     setFindings(mockFindings);
+    //     setAnalysisTime((Date.now() - startTime) / 1000);
+    //     setAnalysisStatus("complete");
+    //     setShowingPrevious(false);
+
+    //     toast({
+    //       title: "Analysis Complete",
+    //       description: `Your smart contract has been analyzed successfully`,
+    //     });
+    //   }, 3000);
   };
 
   return (
