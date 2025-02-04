@@ -18,12 +18,12 @@ export default function Index() {
         </header>
 
         {/* TEST INPUT */}
-        <div className="bg-white text-gray-400">
+        <div>
           <ContractInput />
         </div>
 
         {/* TEST REPORT */}
-        <div className="bg-white text-gray-400">
+        <div>
           <Report findings={[]} analysisTime={1000} />
         </div>
 

@@ -3,35 +3,40 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-      --background: 260 60% 5%;
-      --foreground: 0 0% 100%;
-      --card: 260 60% 5%;
-      --card-foreground: 0 0% 100%;
-      --popover: 260 60% 5%;
-      --popover-foreground: 0 0% 100%;
-      --primary: 260 60% 50%;
-      --primary-foreground: 0 0% 100%;
-      --secondary: 217 91% 60%;
-      --secondary-foreground: 0 0% 100%;
-      --accent: 151 100% 50%;
-      --accent-foreground: 0 0% 0%;
-      --muted: 260 60% 15%;
-      --muted-foreground: 0 0% 70%;
-      --destructive: 0 100% 50%;
-      --destructive-foreground: 0 0% 100%;
-      --border: 260 60% 15%;
-      --input: 260 60% 15%;
-      --ring: 260 60% 50%;
-      --radius: 0.5rem;
-    }
+  :root {
+    --background: 260 60% 5%;
+    --foreground: 0 0% 100%;
+    --card: 260 60% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 260 60% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 260 60% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 151 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --muted: 260 60% 15%;
+    --muted-foreground: 0 0% 70%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 260 60% 15%;
+    --input: 260 60% 15%;
+    --ring: 260 60% 50%;
+    --radius: 0.5rem;
   }
+}
   
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+@layer base {
+  * {
+    @apply border-border;
   }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.bg-glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+}
