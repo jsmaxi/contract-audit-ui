@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/select";
 import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
 
-const ContractInput = () => {
+interface ContractInputProps {
+  onAnalyze: (code: string, model: string) => void;
+}
+
+const ContractInput = ({ onAnalyze }: ContractInputProps) => {
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o");
@@ -24,10 +28,6 @@ const ContractInput = () => {
   const { toast } = useToast();
 
   const characterCount = code.length;
-
-  const handleClick = () => {
-    console.log("Click:", code); //todo handle
-  };
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -149,7 +149,7 @@ const ContractInput = () => {
       </div>
 
       <Button
-        onClick={handleClick}
+        onClick={() => onAnalyze(code, model)}
         className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
       >
         Analyze Contract
