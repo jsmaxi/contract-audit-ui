@@ -8,8 +8,8 @@ const orb = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "Audit UI",
-  description: "Smart Contract Audit UI",
+  title: "Audit",
+  description: "Smart Contract Audit",
 };
 
 export default function RootLayout({
