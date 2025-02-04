@@ -1,5 +1,6 @@
 import Logo from "@/components/Logo";
 import ContractInput from "./ContractInput";
+import Report from "./Report";
 
 const APP_NAME = "SmartGuard AI";
 
@@ -19,6 +20,11 @@ export default function Index() {
         {/* TEST INPUT */}
         <div className="bg-white text-gray-400">
           <ContractInput />
+        </div>
+
+        {/* TEST REPORT */}
+        <div className="bg-white text-gray-400">
+          <Report findings={[]} analysisTime={1000} />
         </div>
 
         <main className="max-w-3xl mx-auto">
