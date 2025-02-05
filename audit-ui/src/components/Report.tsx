@@ -196,124 +196,138 @@ const Report = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Severity</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {findings.map((finding) => (
-              <Fragment key={finding.name}>
-                <TableRow
-                  className="cursor-pointer hover:bg-background/50"
-                  onClick={() =>
-                    setExpandedFinding(
-                      expandedFinding === finding.name ? null : finding.name
-                    )
-                  }
-                >
-                  <TableCell
-                    className={`font-bold uppercase ${getSeverityColor(
-                      finding.severity.toString()
-                    )}`}
-                  >
-                    {finding.severity.toString()}
-                  </TableCell>
-                  <TableCell className="font-medium">{finding.name}</TableCell>
-                  <TableCell className="max-w-md">
-                    {finding.description}
-                  </TableCell>
-                  <TableCell>
-                    {expandedFinding === finding.name ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </TableCell>
+      {findings && findings.length > 0 && (
+        <>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Severity</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-                {expandedFinding === finding.name && (
-                  <TableRow>
-                    <TableCell colSpan={4} className="bg-background/30 p-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-bold mb-2">Impacted Code:</h4>
-                          <pre className="bg-background/50 p-4 rounded-lg overflow-x-auto">
-                            <code>{finding.impacted_code}</code>
-                          </pre>
-                        </div>
-                        <div>
-                          <h4 className="font-bold mb-2">Location:</h4>
-                          <p className="text-sm">{finding.location}</p>
-                        </div>
-                        <div>
-                          <h4 className="font-bold mb-2">Recommendations:</h4>
-                          <p className="text-sm">{finding.recommendations}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {findings.map((finding) => (
+                  <Fragment key={finding.name}>
+                    <TableRow
+                      className="cursor-pointer hover:bg-background/50"
+                      onClick={() =>
+                        setExpandedFinding(
+                          expandedFinding === finding.name ? null : finding.name
+                        )
+                      }
+                    >
+                      <TableCell
+                        className={`font-bold uppercase ${getSeverityColor(
+                          finding.severity.toString()
+                        )}`}
+                      >
+                        {finding.severity.toString()}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {finding.name}
+                      </TableCell>
+                      <TableCell className="max-w-md">
+                        {finding.description}
+                      </TableCell>
+                      <TableCell>
+                        {expandedFinding === finding.name ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                    {expandedFinding === finding.name && (
+                      <TableRow>
+                        <TableCell colSpan={4} className="bg-background/30 p-4">
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="font-bold mb-2">Impacted Code:</h4>
+                              <pre className="bg-background/50 p-4 rounded-lg overflow-x-auto">
+                                <code>{finding.impacted_code}</code>
+                              </pre>
+                            </div>
+                            <div>
+                              <h4 className="font-bold mb-2">Location:</h4>
+                              <p className="text-sm">{finding.location}</p>
+                            </div>
+                            <div>
+                              <h4 className="font-bold mb-2">
+                                Recommendations:
+                              </h4>
+                              <p className="text-sm">
+                                {finding.recommendations}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
-      <div className="flex flex-wrap gap-4 mt-6">
-        <Button
-          onClick={handleDownloadJSON}
-          variant="outline"
-          className="gap-2"
-        >
-          <FileJson className="w-4 h-4" />
-          Download JSON
-        </Button>
-        <Button onClick={handleDownloadPDF} variant="outline" className="gap-2">
-          <FileText className="w-4 h-4" />
-          Download PDF
-        </Button>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <Mail className="w-4 h-4" />
-              Email Report
+          <div className="flex flex-wrap gap-4 mt-6">
+            <Button
+              onClick={handleDownloadJSON}
+              variant="outline"
+              className="gap-2"
+            >
+              <FileJson className="w-4 h-4" />
+              Download JSON
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Send Audit Report</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button
-                onClick={handleEmailReport}
-                disabled={sendingEmail}
-                className="w-full"
-              >
-                Send Report
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-        <Button
-          onClick={onSendReward}
-          variant="secondary"
-          className="gap-2 ml-auto"
-        >
-          <Send className="w-4 h-4" />
-          Send Reward
-        </Button>
-      </div>
+            <Button
+              onClick={handleDownloadPDF}
+              variant="outline"
+              className="gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              Download PDF
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Mail className="w-4 h-4" />
+                  Email Report
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Send Audit Report</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Button
+                    onClick={handleEmailReport}
+                    disabled={sendingEmail}
+                    className="w-full"
+                  >
+                    Send Report
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Button
+              onClick={onSendReward}
+              variant="secondary"
+              className="gap-2 ml-auto"
+            >
+              <Send className="w-4 h-4" />
+              Send Reward
+            </Button>
+          </div>
+        </>
+      )}
     </Card>
   );
 };
