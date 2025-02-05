@@ -1,5 +1,7 @@
 # Smart Contract Audit UI
 
+![Logo](./logo.svg)
+
 ```console
 cd audit-ui
 npm install
