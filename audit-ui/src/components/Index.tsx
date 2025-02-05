@@ -126,6 +126,10 @@ export default function Index() {
 
   const handleSendReward = () => {
     // todo
+    toast({
+      title: "Coming Soon",
+      description: "Rewards functionality - coming soon.",
+    });
   };
 
   return (
