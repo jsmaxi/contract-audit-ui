@@ -25,6 +25,7 @@ export default function Index() {
     number | null
   >(null);
   const [showingPrevious, setShowingPrevious] = useState(false);
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
 
   const handleAnalyze = async (code: string, model: string) => {
     if (!code?.trim()) {
@@ -37,6 +38,8 @@ export default function Index() {
     }
 
     console.log("analyzing...");
+
+    setShowLoadingAnimation(true);
 
     setAnalysisStatus("scanning");
     const startTime = Date.now();
@@ -67,6 +70,7 @@ export default function Index() {
         vulnerabilities: [mockVulnerability1, mockVulnerability2],
       };
       const mockFindings: Vulnerability[] = mockReport.vulnerabilities;
+      await new Promise((f) => setTimeout(f, 2000));
       setFindings(mockFindings);
     } else {
       try {
@@ -87,6 +91,7 @@ export default function Index() {
     setAnalysisTime((Date.now() - startTime) / 1000);
     setAnalysisStatus("complete");
     setShowingPrevious(false);
+    setShowLoadingAnimation(false);
 
     toast({
       title: "Analysis Complete",
@@ -142,6 +147,7 @@ export default function Index() {
           <ContractInput
             onAnalyze={handleAnalyze}
             currentStatus={analysisStatus}
+            showLoadingAnimation={showLoadingAnimation}
           />
 
           {analysisStatus === "scanning" && (

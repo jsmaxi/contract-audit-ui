@@ -15,13 +15,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
+import Loading from "./Loading";
 
 interface ContractInputProps {
   onAnalyze: (code: string, model: string) => void;
   currentStatus: string;
+  showLoadingAnimation: boolean;
 }
 
-const ContractInput = ({ onAnalyze, currentStatus }: ContractInputProps) => {
+const ContractInput = ({
+  onAnalyze,
+  currentStatus,
+  showLoadingAnimation,
+}: ContractInputProps) => {
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o");
@@ -132,6 +138,8 @@ const ContractInput = ({ onAnalyze, currentStatus }: ContractInputProps) => {
           placeholder="// Paste your contract code here..."
           className="min-h-[200px] bg-background/50"
         />
+
+        {showLoadingAnimation && <Loading />}
 
         <div className="flex justify-between items-center">
           <div className="text-sm text-muted-foreground">
