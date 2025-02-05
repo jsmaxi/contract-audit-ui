@@ -4,6 +4,7 @@ import Logo from "@/components/Logo";
 import ContractInput from "./ContractInput";
 import Report from "./Report";
 import Stats from "./Stats";
+import FAQ from "./FAQ";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { callApi } from "@/lib/api";
@@ -12,7 +13,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
 
 const APP_NAME = "SmartGuard AI";
-const MOCK = true;
+const MOCK = false;
 
 export default function Index() {
   const { toast } = useToast();
@@ -73,10 +74,18 @@ export default function Index() {
       const mockFindings: Vulnerability[] = mockReport.vulnerabilities;
       await new Promise((f) => setTimeout(f, 2000));
       setFindings(mockFindings);
+      toast({
+        title: "Analysis Complete",
+        description: `Your smart contract has been analyzed successfully`,
+      });
     } else {
       try {
         const result = await callApi(code, model);
         setFindings(result.vulnerabilities);
+        toast({
+          title: "Analysis Complete",
+          description: `Your smart contract has been analyzed successfully`,
+        });
       } catch (e) {
         console.log(e);
         toast({
@@ -85,7 +94,6 @@ export default function Index() {
           variant: "destructive",
         });
         setFindings([]);
-        return;
       }
     }
 
@@ -93,11 +101,6 @@ export default function Index() {
     setAnalysisStatus("complete");
     setShowingPrevious(false);
     setShowLoadingAnimation(false);
-
-    toast({
-      title: "Analysis Complete",
-      description: `Your smart contract has been analyzed successfully`,
-    });
   };
 
   const togglePreviousReport = () => {
@@ -192,6 +195,7 @@ export default function Index() {
             </>
           )}
 
+          <FAQ />
           <Stats />
 
           <div className="mt-16 border-t border-white/10 pt-8">
