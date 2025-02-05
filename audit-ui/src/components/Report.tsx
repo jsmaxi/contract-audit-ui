@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,58 +29,54 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { downloadJSON } from "@/lib/json";
-
-export interface Finding {
-  id: string;
-  severity: "Critical" | "High" | "Medium" | "Low";
-  title: string;
-  description: string;
-  impactedCode: string;
-  proof: string;
-  recommendations: string[];
-}
+import { Severity, Vulnerability } from "@/lib/models";
 
 interface FindingsReportProps {
-  findings: Finding[];
+  findings: Vulnerability[];
   analysisTime: number;
-  //   onSendReward?: () => void;
+  onSendReward?: () => void;
 }
 
-const Report = ({ findings, analysisTime }: FindingsReportProps) => {
+const Report = ({
+  findings,
+  analysisTime,
+  onSendReward,
+}: FindingsReportProps) => {
+  console.log(findings[0]);
   const { toast } = useToast();
-  const [email, setEmail] = React.useState("");
-  const reportRef = React.useRef<HTMLDivElement>(null);
-  const [expandedFinding, setExpandedFinding] = React.useState<string | null>(
-    null
-  );
+  const [email, setEmail] = useState("");
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [expandedFinding, setExpandedFinding] = useState<string | null>(null);
 
   const severityCounts = {
-    Critical: findings.filter((f) => f.severity === "Critical").length,
-    High: findings.filter((f) => f.severity === "High").length,
-    Medium: findings.filter((f) => f.severity === "Medium").length,
-    Low: findings.filter((f) => f.severity === "Low").length,
+    Critical: findings.filter((f) => f.severity.toString() === "critical")
+      .length,
+    High: findings.filter((f) => f.severity.toString() === "high").length,
+    Medium: findings.filter((f) => f.severity.toString() === "medium").length,
+    Low: findings.filter((f) => f.severity.toString() === "low").length,
   };
 
   const outputCharacters = findings.reduce((total, finding) => {
     return (
       total +
-      finding.title.length +
+      finding.name.length +
+      finding.severity.toString().length +
       finding.description.length +
-      finding.impactedCode.length +
-      finding.proof.length +
-      finding.recommendations.join("").length
+      finding.location.length +
+      finding.impacted_code.length +
+      finding.recommendations.length
     );
   }, 0);
 
-  const getSeverityColor = (severity: Finding["severity"]) => {
+  const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "Critical":
+      case "critical":
         return "text-red-500";
-      case "High":
+      case "high":
         return "text-orange-500";
-      case "Medium":
+      case "medium":
         return "text-yellow-500";
-      case "Low":
+      case "low":
         return "text-blue-500";
       default:
         return "text-gray-500";
@@ -120,14 +116,6 @@ const Report = ({ findings, analysisTime }: FindingsReportProps) => {
     toast({
       title: "Report Sent",
       description: `Audit report has been sent to ${email}`,
-    });
-  };
-
-  const onSendReward = () => {
-    // todo
-    toast({
-      title: "Reward Sent",
-      description: `Reward`,
     });
   };
 
@@ -188,70 +176,64 @@ const Report = ({ findings, analysisTime }: FindingsReportProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>Severity</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {findings.map((finding) => (
-              <React.Fragment key={finding.id}>
+              <Fragment key={finding.name}>
                 <TableRow
                   className="cursor-pointer hover:bg-background/50"
                   onClick={() =>
                     setExpandedFinding(
-                      expandedFinding === finding.id ? null : finding.id
+                      expandedFinding === finding.name ? null : finding.name
                     )
                   }
                 >
                   <TableCell
-                    className={`font-bold ${getSeverityColor(
-                      finding.severity
+                    className={`font-bold uppercase ${getSeverityColor(
+                      finding.severity.toString()
                     )}`}
                   >
-                    {finding.severity}
+                    {finding.severity.toString()}
                   </TableCell>
-                  <TableCell className="font-medium">{finding.title}</TableCell>
+                  <TableCell className="font-medium">{finding.name}</TableCell>
                   <TableCell className="max-w-md">
                     {finding.description}
                   </TableCell>
                   <TableCell>
-                    {expandedFinding === finding.id ? (
+                    {expandedFinding === finding.name ? (
                       <ChevronUp className="w-4 h-4" />
                     ) : (
                       <ChevronDown className="w-4 h-4" />
                     )}
                   </TableCell>
                 </TableRow>
-                {expandedFinding === finding.id && (
+                {expandedFinding === finding.name && (
                   <TableRow>
                     <TableCell colSpan={4} className="bg-background/30 p-4">
                       <div className="space-y-4">
                         <div>
                           <h4 className="font-bold mb-2">Impacted Code:</h4>
                           <pre className="bg-background/50 p-4 rounded-lg overflow-x-auto">
-                            <code>{finding.impactedCode}</code>
+                            <code>{finding.impacted_code}</code>
                           </pre>
                         </div>
                         <div>
-                          <h4 className="font-bold mb-2">Proof:</h4>
-                          <p className="text-sm">{finding.proof}</p>
+                          <h4 className="font-bold mb-2">Location:</h4>
+                          <p className="text-sm">{finding.location}</p>
                         </div>
                         <div>
                           <h4 className="font-bold mb-2">Recommendations:</h4>
-                          <ul className="list-disc list-inside">
-                            {finding.recommendations.map((rec, index) => (
-                              <li key={index} className="text-sm">
-                                {rec}
-                              </li>
-                            ))}
-                          </ul>
+                          <p className="text-sm">{finding.recommendations}</p>
                         </div>
                       </div>
                     </TableCell>
                   </TableRow>
                 )}
-              </React.Fragment>
+              </Fragment>
             ))}
           </TableBody>
         </Table>

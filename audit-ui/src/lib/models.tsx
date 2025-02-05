@@ -5,10 +5,10 @@ export interface AuditRequest {
 }
 
 export enum Severity {
-  Critical,
-  High,
-  Medium,
-  Low,
+  critical,
+  high,
+  medium,
+  low,
 }
 
 export interface Vulnerability {

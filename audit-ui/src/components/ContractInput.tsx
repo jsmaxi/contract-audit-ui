@@ -18,9 +18,10 @@ import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
 
 interface ContractInputProps {
   onAnalyze: (code: string, model: string) => void;
+  currentStatus: string;
 }
 
-const ContractInput = ({ onAnalyze }: ContractInputProps) => {
+const ContractInput = ({ onAnalyze, currentStatus }: ContractInputProps) => {
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o");
@@ -150,6 +151,7 @@ const ContractInput = ({ onAnalyze }: ContractInputProps) => {
 
       <Button
         onClick={() => onAnalyze(code, model)}
+        disabled={currentStatus === "scanning"}
         className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
       >
         Analyze Contract

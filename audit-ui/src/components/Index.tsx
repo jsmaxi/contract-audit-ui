@@ -6,8 +6,12 @@ import Report from "./Report";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { callApi } from "@/lib/api";
+import { Button } from "./ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Severity, Vulnerability, VulnerabilityReport } from "@/lib/models";
 
 const APP_NAME = "SmartGuard AI";
+const MOCK = false;
 
 export default function Index() {
   const { toast } = useToast();
@@ -37,36 +41,77 @@ export default function Index() {
     setAnalysisStatus("scanning");
     const startTime = Date.now();
 
-    try {
-      const _ = await callApi(code, model);
-    } catch (e) {
-      console.log(e);
-      toast({
-        title: "Error",
-        description: "Audit agent call failed",
-        variant: "destructive",
-      });
-      return;
+    if (findings.length > 0) {
+      setPreviousFindings(findings);
+      setPreviousAnalysisTime(analysisTime);
     }
 
-    //   if (findings.length > 0) {
-    //     setPreviousFindings(findings);
-    //     setPreviousAnalysisTime(analysisTime);
-    //   }
+    if (MOCK) {
+      const mockVulnerability1: Vulnerability = {
+        name: "Test",
+        severity: Severity.low,
+        description: "Some issue",
+        location: "function Test ()",
+        impacted_code: "...",
+        recommendations: "Todo",
+      };
+      const mockVulnerability2: Vulnerability = {
+        name: "Alert",
+        severity: Severity.high,
+        description: "Another issue",
+        location: "function Admin ()",
+        impacted_code: "line 21",
+        recommendations: "Recommendations",
+      };
+      const mockReport: VulnerabilityReport = {
+        vulnerabilities: [mockVulnerability1, mockVulnerability2],
+      };
+      const mockFindings: Vulnerability[] = mockReport.vulnerabilities;
+      setFindings(mockFindings);
+    } else {
+      try {
+        const result = await callApi(code, model);
+        setFindings(result.vulnerabilities);
+      } catch (e) {
+        console.log(e);
+        toast({
+          title: "Error",
+          description: "Audit agent call failed",
+          variant: "destructive",
+        });
+        setFindings([]);
+        return;
+      }
+    }
 
-    //   setTimeout(() => {
-    //     const mockFindings: any[] = [];
+    setAnalysisTime((Date.now() - startTime) / 1000);
+    setAnalysisStatus("complete");
+    setShowingPrevious(false);
 
-    //     setFindings(mockFindings);
-    //     setAnalysisTime((Date.now() - startTime) / 1000);
-    //     setAnalysisStatus("complete");
-    //     setShowingPrevious(false);
+    toast({
+      title: "Analysis Complete",
+      description: `Your smart contract has been analyzed successfully`,
+    });
+  };
 
-    //     toast({
-    //       title: "Analysis Complete",
-    //       description: `Your smart contract has been analyzed successfully`,
-    //     });
-    //   }, 3000);
+  const togglePreviousReport = () => {
+    if (showingPrevious) {
+      setShowingPrevious(false);
+      toast({
+        title: "Showing Current Report",
+        description: "Switched to the current analysis report.",
+      });
+    } else if (previousFindings) {
+      setShowingPrevious(true);
+      toast({
+        title: "Showing Previous Report",
+        description: "Switched to the previous analysis report.",
+      });
+    }
+  };
+
+  const handleSendReward = () => {
+    // todo
   };
 
   return (
@@ -81,11 +126,6 @@ export default function Index() {
           </div>
         </header>
 
-        {/* TEST REPORT */}
-        {/* <div>
-          <Report findings={[]} analysisTime={1000} />
-        </div> */}
-
         <main className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-orbitron font-bold text-white mb-4">
@@ -99,7 +139,10 @@ export default function Index() {
             </p>
           </div>
 
-          <ContractInput onAnalyze={handleAnalyze} />
+          <ContractInput
+            onAnalyze={handleAnalyze}
+            currentStatus={analysisStatus}
+          />
 
           {analysisStatus === "scanning" && (
             <div className="mt-8 flex justify-center">
@@ -109,6 +152,37 @@ export default function Index() {
                 </p>
               </div>
             </div>
+          )}
+
+          {analysisStatus === "complete" && (
+            <>
+              {previousFindings && (
+                <div className="flex justify-end mb-2 mt-2">
+                  <Button
+                    variant="outline"
+                    onClick={togglePreviousReport}
+                    className="flex items-center gap-2"
+                  >
+                    {showingPrevious ? (
+                      <>
+                        Next Report <ChevronRight className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <ChevronLeft className="w-4 h-4" /> Previous Report
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+              <Report
+                findings={showingPrevious ? previousFindings! : findings}
+                analysisTime={
+                  showingPrevious ? previousAnalysisTime! : analysisTime
+                }
+                onSendReward={handleSendReward}
+              />
+            </>
           )}
 
           <div className="mt-16 border-t border-white/10 pt-8">
