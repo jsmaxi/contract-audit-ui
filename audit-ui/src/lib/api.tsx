@@ -5,7 +5,7 @@ import {
   VulnerabilityReport,
 } from "./models";
 
-const URL = "http://127.0.0.1:8080/audit";
+const URL = process.env.SERVER_URL + "/audit";
 
 const controller = new AbortController();
 const timeoutSeconds = 3_600_000; // 1 hour
@@ -16,6 +16,9 @@ export const callApi = async (
   model: string,
   language: string
 ): Promise<VulnerabilityReport> => {
+  if (!process.env.SERVER_URL)
+    throw "Invalid environment variable (server URL)";
+
   const request: AuditRequest = {
     contract_code: code,
     language,
