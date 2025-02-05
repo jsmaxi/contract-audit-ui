@@ -104,7 +104,7 @@ const ContractInput = ({
       </div>
 
       <div className="flex flex-col gap-4 mb-4">
-        <div className="flex gap-2">
+        <div className="sm:flex gap-2">
           <Input
             type="file"
             accept="any"
@@ -119,7 +119,7 @@ const ContractInput = ({
             <Upload className="w-4 h-4 mr-2" />
             Upload File
           </Button>
-          <div className="flex flex-1 gap-2">
+          <div className="flex flex-1 gap-2 mt-4 sm:mt-0">
             <Input
               type="url"
               placeholder="Enter contract URL"
@@ -146,7 +146,7 @@ const ContractInput = ({
           <div className="text-sm text-muted-foreground">
             Input characters: {characterCount}
           </div>
-          <div className="flex gap-2">
+          <div className="gap-2 sm:flex">
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="Select language" />
