@@ -29,7 +29,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { downloadJSON } from "@/lib/json";
-import { Severity, Vulnerability } from "@/lib/models";
+import { Vulnerability } from "@/lib/models";
+import sendEmail from "@/lib/email";
 
 interface FindingsReportProps {
   findings: Vulnerability[];
@@ -42,9 +43,9 @@ const Report = ({
   analysisTime,
   onSendReward,
 }: FindingsReportProps) => {
-  console.log(findings[0]);
   const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   const [expandedFinding, setExpandedFinding] = useState<string | null>(null);
 
@@ -111,12 +112,34 @@ const Report = ({
     // todo pdf export
   };
 
-  const handleEmailReport = () => {
-    // todo email
-    toast({
-      title: "Report Sent",
-      description: `Audit report has been sent to ${email}`,
-    });
+  const handleEmailReport = async () => {
+    try {
+      setSendingEmail(true);
+      const sent = await sendEmail(
+        email,
+        "Smart Contract Audit Report",
+        "TEST"
+      );
+      if (sent) {
+        toast({
+          title: "Email report sent",
+          description: `Audit report has been sent to ${email}`,
+        });
+      } else {
+        toast({
+          title: "Email report issue",
+          description: `Audit report has not been sent to ${email} due to issue`,
+        });
+      }
+    } catch (e) {
+      console.log("Email error.", e);
+      toast({
+        title: "Email report issue",
+        description: `Audit report has not been sent to ${email} due to issue`,
+      });
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   return (
@@ -270,7 +293,11 @@ const Report = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <Button onClick={handleEmailReport} className="w-full">
+              <Button
+                onClick={handleEmailReport}
+                disabled={sendingEmail}
+                className="w-full"
+              >
                 Send Report
               </Button>
             </div>

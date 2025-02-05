@@ -4,16 +4,16 @@ export interface AuditRequest {
   model: string;
 }
 
-export enum Severity {
-  critical,
-  high,
-  medium,
-  low,
-}
+// export enum Severity {
+//   critical,
+//   high,
+//   medium,
+//   low,
+// }
 
 export interface Vulnerability {
   name: string;
-  severity: Severity;
+  severity: string;
   description: string;
   location: string;
   impacted_code: string;

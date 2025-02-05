@@ -8,10 +8,10 @@ import { useState } from "react";
 import { callApi } from "@/lib/api";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Severity, Vulnerability, VulnerabilityReport } from "@/lib/models";
+import { Vulnerability, VulnerabilityReport } from "@/lib/models";
 
 const APP_NAME = "SmartGuard AI";
-const MOCK = false;
+const MOCK = true;
 
 export default function Index() {
   const { toast } = useToast();
@@ -49,7 +49,7 @@ export default function Index() {
     if (MOCK) {
       const mockVulnerability1: Vulnerability = {
         name: "Test",
-        severity: Severity.low,
+        severity: "low",
         description: "Some issue",
         location: "function Test ()",
         impacted_code: "...",
@@ -57,7 +57,7 @@ export default function Index() {
       };
       const mockVulnerability2: Vulnerability = {
         name: "Alert",
-        severity: Severity.high,
+        severity: "high",
         description: "Another issue",
         location: "function Admin ()",
         impacted_code: "line 21",
