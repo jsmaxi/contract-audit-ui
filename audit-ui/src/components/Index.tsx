@@ -5,6 +5,7 @@ import ContractInput from "./ContractInput";
 import Report from "./Report";
 import Stats from "./Stats";
 import FAQ from "./FAQ";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { callApi } from "@/lib/api";
@@ -128,7 +129,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-hero-pattern">
+    <div className="min-h-screen" id="main-page">
       <div className="container mx-auto px-4 py-8">
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
@@ -210,6 +211,7 @@ export default function Index() {
           </div>
         </main>
       </div>
+      <ThemeToggle />
     </div>
   );
 }

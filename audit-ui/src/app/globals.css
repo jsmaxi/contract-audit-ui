@@ -44,3 +44,7 @@
 .card {
   padding: 2em;
 }
+
+.light {
+  background: linear-gradient(45deg, #2D1B69 0%, #1E90FF 100%);
+}
