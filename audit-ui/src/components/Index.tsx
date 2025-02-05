@@ -29,7 +29,11 @@ export default function Index() {
   const [showingPrevious, setShowingPrevious] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
 
-  const handleAnalyze = async (code: string, model: string) => {
+  const handleAnalyze = async (
+    code: string,
+    model: string,
+    language: string
+  ) => {
     if (!code?.trim()) {
       toast({
         title: "Error",
@@ -80,7 +84,7 @@ export default function Index() {
       });
     } else {
       try {
-        const result = await callApi(code, model);
+        const result = await callApi(code, model, language);
         setFindings(result.vulnerabilities);
         toast({
           title: "Analysis Complete",

@@ -13,11 +13,12 @@ const _ = setTimeout(() => controller.abort(), timeoutSeconds);
 
 export const callApi = async (
   code: string,
-  model: string
+  model: string,
+  language: string
 ): Promise<VulnerabilityReport> => {
   const request: AuditRequest = {
     contract_code: code,
-    language: "TEST",
+    language,
     model,
   };
 

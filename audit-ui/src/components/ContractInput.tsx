@@ -18,7 +18,7 @@ import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
 import Loading from "./Loading";
 
 interface ContractInputProps {
-  onAnalyze: (code: string, model: string) => void;
+  onAnalyze: (code: string, model: string, language: string) => void;
   currentStatus: string;
   showLoadingAnimation: boolean;
 }
@@ -31,6 +31,7 @@ const ContractInput = ({
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o");
+  const [language, setLanguage] = useState("test1");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -145,20 +146,34 @@ const ContractInput = ({
           <div className="text-sm text-muted-foreground">
             Input characters: {characterCount}
           </div>
-          <Select value={model} onValueChange={setModel}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select model" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="gpt-4o">GPT-4O (Best results)</SelectItem>
-              <SelectItem value="gpt-4o-mini">GPT-4O Mini (Faster)</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent className="bg-background">
+                <SelectItem value="test1">Language1</SelectItem>
+                <SelectItem value="test2">Language2</SelectItem>
+                <SelectItem value="test3">Language3</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={model} onValueChange={setModel}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select model" />
+              </SelectTrigger>
+              <SelectContent className="bg-background">
+                <SelectItem value="gpt-4o">GPT-4O (Best results)</SelectItem>
+                <SelectItem value="gpt-4o-mini">
+                  GPT-4O Mini (Faster)
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
       <Button
-        onClick={() => onAnalyze(code, model)}
+        onClick={() => onAnalyze(code, model, language)}
         disabled={currentStatus === "scanning"}
         className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
       >
