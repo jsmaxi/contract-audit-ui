@@ -3,6 +3,7 @@
 import Logo from "@/components/Logo";
 import ContractInput from "./ContractInput";
 import Report from "./Report";
+import Stats from "./Stats";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { callApi } from "@/lib/api";
@@ -190,6 +191,8 @@ export default function Index() {
               />
             </>
           )}
+
+          <Stats />
 
           <div className="mt-16 border-t border-white/10 pt-8">
             <div className="flex flex-wrap items-center justify-center gap-8 mb-8"></div>

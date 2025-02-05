@@ -129,6 +129,7 @@ const Report = ({
         toast({
           title: "Email report issue",
           description: `Audit report has not been sent to ${email} due to issue`,
+          variant: "destructive",
         });
       }
     } catch (e) {
@@ -136,6 +137,7 @@ const Report = ({
       toast({
         title: "Email report issue",
         description: `Audit report has not been sent to ${email} due to issue`,
+        variant: "destructive",
       });
     } finally {
       setSendingEmail(false);
