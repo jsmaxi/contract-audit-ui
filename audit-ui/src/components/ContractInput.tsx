@@ -122,7 +122,8 @@ const ContractInput = ({
           <div className="flex flex-1 gap-2 mt-4 sm:mt-0">
             <Input
               type="url"
-              placeholder="Enter contract URL"
+              placeholder="Enter GitHub URL"
+              title="Public GitHub contract code URL"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />

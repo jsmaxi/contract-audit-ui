@@ -30,6 +30,21 @@ export default function Index() {
   const [showingPrevious, setShowingPrevious] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
 
+  const getSeverityOrder = (severity: string) => {
+    switch (severity) {
+      case "critical":
+        return 0;
+      case "high":
+        return 1;
+      case "medium":
+        return 2;
+      case "low":
+        return 3;
+      default:
+        return 4;
+    }
+  };
+
   const handleAnalyze = async (
     code: string,
     model: string,
@@ -76,7 +91,9 @@ export default function Index() {
       const mockReport: VulnerabilityReport = {
         vulnerabilities: [mockVulnerability1, mockVulnerability2],
       };
-      const mockFindings: Vulnerability[] = mockReport.vulnerabilities;
+      const mockFindings: Vulnerability[] = mockReport.vulnerabilities.sort(
+        (a, b) => getSeverityOrder(a.severity) - getSeverityOrder(b.severity)
+      );
       await new Promise((f) => setTimeout(f, 2000));
       setFindings(mockFindings);
       toast({
@@ -86,7 +103,10 @@ export default function Index() {
     } else {
       try {
         const result = await callApi(code, model, language);
-        setFindings(result.vulnerabilities);
+        const sorted = result.vulnerabilities.sort(
+          (a, b) => getSeverityOrder(a.severity) - getSeverityOrder(b.severity)
+        );
+        setFindings(sorted);
         toast({
           title: "Analysis Complete",
           description: `Your smart contract has been analyzed successfully`,
