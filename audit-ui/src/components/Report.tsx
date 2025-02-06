@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { downloadJSON } from "@/lib/json";
 import { Vulnerability } from "@/lib/models";
 import sendEmail from "@/lib/email";
+import { createDocument } from "@/lib/pdf";
 
 interface FindingsReportProps {
   findings: Vulnerability[];
@@ -101,15 +102,28 @@ const Report = ({
       console.log(e);
       toast({
         title: "JSON Report Download Failed",
-        description: "Download of audit report failed.",
+        description: "Download of JSON audit report failed.",
+        variant: "destructive",
       });
     }
   };
 
   const handleDownloadPDF = () => {
     if (!reportRef.current) return;
-
-    // todo pdf export
+    try {
+      createDocument("doc", "test ", "smart-contract-audit-report.pdf");
+      toast({
+        title: "PDF Report Downloaded",
+        description: "Audit report has been downloaded successfully.",
+      });
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "PDF Report Download Failed",
+        description: "Download of PDF audit report failed.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEmailReport = async () => {
