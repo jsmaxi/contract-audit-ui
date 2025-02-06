@@ -30,8 +30,8 @@ const ContractInput = ({
 }: ContractInputProps) => {
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
-  const [model, setModel] = useState("gpt-4o");
-  const [language, setLanguage] = useState("test1");
+  const [model, setModel] = useState("gpt-4o-mini");
+  const [language, setLanguage] = useState("Solidity");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -153,9 +153,8 @@ const ContractInput = ({
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent className="bg-background">
-                <SelectItem value="test1">Language1</SelectItem>
-                <SelectItem value="test2">Language2</SelectItem>
-                <SelectItem value="test3">Language3</SelectItem>
+                <SelectItem value="Solidity">Solidity</SelectItem>
+                <SelectItem value="Test">Test</SelectItem>
               </SelectContent>
             </Select>
             <Select value={model} onValueChange={setModel}>
@@ -163,10 +162,8 @@ const ContractInput = ({
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent className="bg-background">
-                <SelectItem value="gpt-4o">GPT-4O (Best results)</SelectItem>
-                <SelectItem value="gpt-4o-mini">
-                  GPT-4O Mini (Faster)
-                </SelectItem>
+                <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                <SelectItem value="o1-mini">o1-mini</SelectItem>
               </SelectContent>
             </Select>
           </div>

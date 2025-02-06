@@ -27,6 +27,8 @@ export const callApi = async (
     model,
   };
 
+  console.log("Calling.", model, language);
+
   const response = await fetch(URL, {
     method: "POST",
     headers: {
