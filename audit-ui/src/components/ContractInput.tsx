@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchUrl, transformGitHubUrlToApiUrl } from "@/lib/github";
+import { exampleContracts } from "@/lib/examples";
 import Loading from "./Loading";
 
 interface ContractInputProps {
@@ -32,6 +33,7 @@ const ContractInput = ({
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o-mini");
   const [language, setLanguage] = useState("Solidity");
+  const [selectedExample, setSelectedExample] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -96,6 +98,22 @@ const ContractInput = ({
     }
   };
 
+  const handleExampleSelect = (example: string) => {
+    if (!example) return;
+
+    const selectedContract = exampleContracts[language].find(
+      (contract) => contract.name === example
+    );
+
+    if (selectedContract) {
+      setCode(selectedContract.code);
+      toast({
+        title: "Example Loaded",
+        description: `${selectedContract.name} contract has been loaded.`,
+      });
+    }
+  };
+
   return (
     <Card className="p-6 bg-glass-card backdrop-blur-sm border-none">
       <div className="flex items-center gap-2 mb-4">
@@ -134,6 +152,21 @@ const ContractInput = ({
           </div>
         </div>
 
+        <div className="flex gap-2">
+          <Select value={selectedExample} onValueChange={handleExampleSelect}>
+            <SelectTrigger className="flex-1">
+              <SelectValue placeholder="Select an example contract" />
+            </SelectTrigger>
+            <SelectContent className="bg-background">
+              {exampleContracts[language].map((contract) => (
+                <SelectItem key={contract.name} value={contract.name}>
+                  {contract.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <Textarea
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -148,7 +181,13 @@ const ContractInput = ({
             Input characters: {characterCount}
           </div>
           <div className="gap-2 sm:flex">
-            <Select value={language} onValueChange={setLanguage}>
+            <Select
+              value={language}
+              onValueChange={(value) => {
+                setLanguage(value);
+                setSelectedExample("");
+              }}
+            >
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
