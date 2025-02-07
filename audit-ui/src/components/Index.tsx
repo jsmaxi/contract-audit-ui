@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
 import { callAuditApi, callFixApi } from "@/lib/api";
+import AIChat from "./AIChat";
 
 const APP_NAME = "SmartGuard AI";
 const MOCK = false;
@@ -305,6 +306,7 @@ export default function Index() {
         </main>
       </div>
       <ThemeToggle />
+      <AIChat />
     </div>
   );
 }
