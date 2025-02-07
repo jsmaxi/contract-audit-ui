@@ -265,7 +265,9 @@ export default function Index() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="audit">Audit</TabsTrigger>
-              <TabsTrigger value="cicd">CI/CD</TabsTrigger>
+              <TabsTrigger value="cicd" disabled={!cicdCode}>
+                CI/CD
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="audit">
