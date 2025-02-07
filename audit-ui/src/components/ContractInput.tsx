@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ interface ContractInputProps {
   onAnalyze: (code: string, model: string, language: string) => void;
   onFix: (code: string, model: string, language: string) => Promise<string>;
   onTriggerCICD: (code: string) => void;
+  onContractTextChange: (code: string) => void;
+  initialCode: string;
   currentStatus: string;
   showLoadingAnimation: boolean;
   isFixing: boolean;
@@ -31,11 +33,13 @@ const ContractInput = ({
   onAnalyze,
   onFix,
   onTriggerCICD,
+  onContractTextChange,
+  initialCode,
   currentStatus,
   showLoadingAnimation,
   isFixing,
 }: ContractInputProps) => {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(initialCode);
   const [url, setUrl] = useState("");
   const [model, setModel] = useState("gpt-4o-mini");
   const [language, setLanguage] = useState("Solidity");
@@ -44,6 +48,10 @@ const ContractInput = ({
   const { toast } = useToast();
 
   const characterCount = code.length;
+
+  useEffect(() => {
+    onContractTextChange(code);
+  }, [code]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>

@@ -37,6 +37,7 @@ export default function Index() {
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
   const [activeTab, setActiveTab] = useState("audit");
   const [cicdCode, setCicdCode] = useState("");
+  const [auditCode, setAuditCode] = useState("");
 
   const getSeverityOrder = (severity: string) => {
     switch (severity) {
@@ -237,6 +238,10 @@ export default function Index() {
     setActiveTab("cicd");
   };
 
+  const handleAuditCodeChange = (code: string) => {
+    setAuditCode(code);
+  };
+
   return (
     <div className="min-h-screen" id="main-page">
       <div className="container mx-auto px-4 py-8">
@@ -275,6 +280,8 @@ export default function Index() {
                 onAnalyze={handleAnalyze}
                 onFix={handleFix}
                 onTriggerCICD={handleTriggerCICD}
+                onContractTextChange={handleAuditCodeChange}
+                initialCode={auditCode}
                 currentStatus={analysisStatus}
                 showLoadingAnimation={showLoadingAnimation}
                 isFixing={isFixing}
