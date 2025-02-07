@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Code2, Upload, Link } from "lucide-react";
+import { Code2, Upload, Link, Wand2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -20,14 +20,18 @@ import Loading from "./Loading";
 
 interface ContractInputProps {
   onAnalyze: (code: string, model: string, language: string) => void;
+  onFix: (code: string, model: string, language: string) => Promise<string>;
   currentStatus: string;
   showLoadingAnimation: boolean;
+  isFixing: boolean;
 }
 
 const ContractInput = ({
   onAnalyze,
+  onFix,
   currentStatus,
   showLoadingAnimation,
+  isFixing,
 }: ContractInputProps) => {
   const [code, setCode] = useState("");
   const [url, setUrl] = useState("");
@@ -111,6 +115,13 @@ const ContractInput = ({
         title: "Example Loaded",
         description: `${selectedContract.name} contract has been loaded.`,
       });
+    }
+  };
+
+  const handleFix = async (code: string, model: string, language: string) => {
+    const fixed = await onFix(code, model, language);
+    if (fixed) {
+      setCode(fixed);
     }
   };
 
@@ -209,13 +220,24 @@ const ContractInput = ({
         </div>
       </div>
 
-      <Button
-        onClick={() => onAnalyze(code, model, language)}
-        disabled={currentStatus === "scanning"}
-        className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
-      >
-        Analyze Contract
-      </Button>
+      <div className="flex flex-col gap-4">
+        <Button
+          onClick={() => onAnalyze(code, model, language)}
+          disabled={currentStatus === "scanning" || isFixing}
+          className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
+        >
+          Analyze Contract
+        </Button>
+
+        <Button
+          onClick={() => handleFix(code, model, language)}
+          disabled={currentStatus === "scanning" || isFixing}
+          className="w-full bg-gradient-to-r from-[#D946EF] to-[#8B5CF6] text-white hover:opacity-90 transition-opacity"
+        >
+          <Wand2 className="w-4 h-4 mr-2" />
+          Fix with AI
+        </Button>
+      </div>
     </Card>
   );
 };

@@ -8,10 +8,10 @@ import FAQ from "./FAQ";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { callApi } from "@/lib/api";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
+import { callAuditApi, callFixApi } from "@/lib/api";
 
 const APP_NAME = "SmartGuard AI";
 const MOCK = false;
@@ -21,8 +21,11 @@ export default function Index() {
   const [analysisStatus, setAnalysisStatus] = useState<
     "idle" | "scanning" | "complete"
   >("idle");
-  const [findings, setFindings] = useState<any[]>([]);
-  const [previousFindings, setPreviousFindings] = useState<any[] | null>(null);
+  const [isFixing, setIsFixing] = useState<boolean>(false);
+  const [findings, setFindings] = useState<Vulnerability[]>([]);
+  const [previousFindings, setPreviousFindings] = useState<
+    Vulnerability[] | null
+  >(null);
   const [analysisTime, setAnalysisTime] = useState(0);
   const [previousAnalysisTime, setPreviousAnalysisTime] = useState<
     number | null
@@ -102,7 +105,7 @@ export default function Index() {
       });
     } else {
       try {
-        const result = await callApi(code, model, language);
+        const result = await callAuditApi(code, model, language);
         const sorted = result.vulnerabilities.sort(
           (a, b) => getSeverityOrder(a.severity) - getSeverityOrder(b.severity)
         );
@@ -126,6 +129,70 @@ export default function Index() {
     setAnalysisStatus("complete");
     setShowingPrevious(false);
     setShowLoadingAnimation(false);
+  };
+
+  const handleFix = async (
+    code: string,
+    model: string,
+    language: string
+  ): Promise<string> => {
+    if (!code?.trim()) {
+      toast({
+        title: "Error",
+        description:
+          "Please analyze a contract code first to get suggestions for fixes",
+        variant: "destructive",
+      });
+      return "";
+    }
+
+    if (findings.length <= 0) {
+      toast({
+        title: "Error",
+        description:
+          "Audit report must contain any vulnerabilities to fix them",
+        variant: "destructive",
+      });
+      return "";
+    }
+
+    console.log("fixing...");
+    setShowLoadingAnimation(true);
+    setIsFixing(true);
+    const startTime = Date.now();
+
+    if (MOCK) {
+      await new Promise((f) => setTimeout(f, 2000));
+      toast({
+        title: "Fix Complete",
+        description: `Your smart contract has been fixed successfully`,
+      });
+      return "Fixed";
+    } else {
+      try {
+        const result = await callFixApi(code, model, language, findings);
+        console.log(result);
+        toast({
+          title: "Fix Complete",
+          description: `Your smart contract code has been updated`,
+        });
+        console.log("Fix time", (Date.now() - startTime) / 1000);
+        setIsFixing(false);
+        setShowLoadingAnimation(false);
+        return result;
+      } catch (e) {
+        console.log(e);
+        console.log("Fix time", (Date.now() - startTime) / 1000);
+        setIsFixing(false);
+        setShowLoadingAnimation(false);
+        toast({
+          title: "Error",
+          description: "Agent call failed",
+          variant: "destructive",
+        });
+        return "";
+      }
+    }
   };
 
   const togglePreviousReport = () => {
@@ -179,8 +246,10 @@ export default function Index() {
 
           <ContractInput
             onAnalyze={handleAnalyze}
+            onFix={handleFix}
             currentStatus={analysisStatus}
             showLoadingAnimation={showLoadingAnimation}
+            isFixing={isFixing}
           />
 
           {analysisStatus === "scanning" && (

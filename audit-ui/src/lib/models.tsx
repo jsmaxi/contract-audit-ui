@@ -31,3 +31,14 @@ export interface AuditResponse {
 export interface AuditErrorResponse {
   error: string;
 }
+
+export interface FixRequest {
+  contract_code: string;
+  language: string;
+  model: string;
+  vulnerabilities: Vulnerability[];
+}
+
+export interface FixResponse {
+  code: string;
+}
