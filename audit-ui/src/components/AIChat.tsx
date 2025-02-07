@@ -9,6 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { callChatApi } from "@/lib/chat";
+
+const MOCK = false;
 
 interface Message {
   role: "user" | "assistant";
@@ -44,16 +47,39 @@ const AIChat = () => {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsThinking(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Question received. Anything else?",
-        },
-      ]);
-      setIsThinking(false);
-    }, 2000);
+    if (MOCK) {
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Question received. Anything else?",
+          },
+        ]);
+        setIsThinking(false);
+      }, 2000);
+    } else {
+      try {
+        const response = await callChatApi(userMessage);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: response,
+          },
+        ]);
+        setIsThinking(false);
+      } catch (e) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "An error occurred",
+          },
+        ]);
+        setIsThinking(false);
+      }
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
