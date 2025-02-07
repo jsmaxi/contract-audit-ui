@@ -3,6 +3,7 @@
 import { ChatRequest, ChatResponse } from "./models";
 
 const CHAT_URL = process.env.SERVER_URL + "/chat";
+const model = "gpt-4o-mini";
 
 const controller = new AbortController();
 const timeoutSeconds = 3_600_000; // 1 hour
@@ -14,6 +15,7 @@ export const callChatApi = async (text: string): Promise<string> => {
 
   const request: ChatRequest = {
     text,
+    model,
   };
 
   console.log("Calling chat.");

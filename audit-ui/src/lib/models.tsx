@@ -45,6 +45,7 @@ export interface FixResponse {
 
 export interface ChatRequest {
   text: string;
+  model: string;
 }
 
 export interface ChatResponse {
