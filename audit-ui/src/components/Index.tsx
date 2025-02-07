@@ -5,14 +5,16 @@ import ContractInput from "./ContractInput";
 import Report from "./Report";
 import Stats from "./Stats";
 import FAQ from "./FAQ";
-import ThemeToggle from "@/components/ThemeToggle";
+import CICD from "./CICD";
+import ThemeToggle from "./ThemeToggle";
+import AIChat from "./AIChat";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
 import { callAuditApi, callFixApi } from "@/lib/api";
-import AIChat from "./AIChat";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const APP_NAME = "SmartGuard AI";
 const MOCK = false;
@@ -33,6 +35,8 @@ export default function Index() {
   >(null);
   const [showingPrevious, setShowingPrevious] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
+  const [activeTab, setActiveTab] = useState("audit");
+  const [cicdCode, setCicdCode] = useState("");
 
   const getSeverityOrder = (severity: string) => {
     switch (severity) {
@@ -220,6 +224,19 @@ export default function Index() {
     });
   };
 
+  const handleTriggerCICD = (code: string) => {
+    if (!code.trim()) {
+      toast({
+        title: "Empty contract code",
+        description: "Text box contains no contract code",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCicdCode(code);
+    setActiveTab("cicd");
+  };
+
   return (
     <div className="min-h-screen" id="main-page">
       <div className="container mx-auto px-4 py-8">
@@ -245,54 +262,68 @@ export default function Index() {
             </p>
           </div>
 
-          <ContractInput
-            onAnalyze={handleAnalyze}
-            onFix={handleFix}
-            currentStatus={analysisStatus}
-            showLoadingAnimation={showLoadingAnimation}
-            isFixing={isFixing}
-          />
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="audit">Audit</TabsTrigger>
+              <TabsTrigger value="cicd">CI/CD</TabsTrigger>
+            </TabsList>
 
-          {analysisStatus === "scanning" && (
-            <div className="mt-8 flex justify-center">
-              <div className="animate-pulse text-center">
-                <p className="text-white font-orbitron">
-                  Analyzing Contract...
-                </p>
-              </div>
-            </div>
-          )}
+            <TabsContent value="audit">
+              <ContractInput
+                onAnalyze={handleAnalyze}
+                onFix={handleFix}
+                onTriggerCICD={handleTriggerCICD}
+                currentStatus={analysisStatus}
+                showLoadingAnimation={showLoadingAnimation}
+                isFixing={isFixing}
+              />
 
-          {analysisStatus === "complete" && (
-            <>
-              {previousFindings && (
-                <div className="flex justify-end mb-2 mt-2">
-                  <Button
-                    variant="outline"
-                    onClick={togglePreviousReport}
-                    className="flex items-center gap-2"
-                  >
-                    {showingPrevious ? (
-                      <>
-                        Next Report <ChevronRight className="w-4 h-4" />
-                      </>
-                    ) : (
-                      <>
-                        <ChevronLeft className="w-4 h-4" /> Previous Report
-                      </>
-                    )}
-                  </Button>
+              {analysisStatus === "scanning" && (
+                <div className="mt-8 flex justify-center">
+                  <div className="animate-pulse text-center">
+                    <p className="text-white font-orbitron">
+                      Analyzing Contract...
+                    </p>
+                  </div>
                 </div>
               )}
-              <Report
-                findings={showingPrevious ? previousFindings! : findings}
-                analysisTime={
-                  showingPrevious ? previousAnalysisTime! : analysisTime
-                }
-                onSendReward={handleSendReward}
-              />
-            </>
-          )}
+
+              {analysisStatus === "complete" && (
+                <>
+                  {previousFindings && (
+                    <div className="flex justify-end mb-2 mt-2">
+                      <Button
+                        variant="outline"
+                        onClick={togglePreviousReport}
+                        className="flex items-center gap-2"
+                      >
+                        {showingPrevious ? (
+                          <>
+                            Next Report <ChevronRight className="w-4 h-4" />
+                          </>
+                        ) : (
+                          <>
+                            <ChevronLeft className="w-4 h-4" /> Previous Report
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  <Report
+                    findings={showingPrevious ? previousFindings! : findings}
+                    analysisTime={
+                      showingPrevious ? previousAnalysisTime! : analysisTime
+                    }
+                    onSendReward={handleSendReward}
+                  />
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="cicd">
+              <CICD code={cicdCode} />
+            </TabsContent>
+          </Tabs>
 
           <FAQ />
           <Stats />

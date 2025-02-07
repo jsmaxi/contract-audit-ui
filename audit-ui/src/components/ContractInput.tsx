@@ -21,6 +21,7 @@ import Loading from "./Loading";
 interface ContractInputProps {
   onAnalyze: (code: string, model: string, language: string) => void;
   onFix: (code: string, model: string, language: string) => Promise<string>;
+  onTriggerCICD: (code: string) => void;
   currentStatus: string;
   showLoadingAnimation: boolean;
   isFixing: boolean;
@@ -29,6 +30,7 @@ interface ContractInputProps {
 const ContractInput = ({
   onAnalyze,
   onFix,
+  onTriggerCICD,
   currentStatus,
   showLoadingAnimation,
   isFixing,
@@ -236,6 +238,14 @@ const ContractInput = ({
         >
           <Wand2 className="w-4 h-4 mr-2" />
           Fix with AI
+        </Button>
+
+        <Button
+          onClick={() => onTriggerCICD(code)}
+          className="w-full bg-gradient-to-r from-gray-600 to-cyan-600 hover:opacity-90 transition-opacity"
+          disabled={!code || currentStatus === "scanning" || isFixing}
+        >
+          Trigger CI/CD
         </Button>
       </div>
     </Card>
