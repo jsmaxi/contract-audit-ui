@@ -26,6 +26,7 @@ export interface VulnerabilityReport {
 
 export interface AuditResponse {
   report: VulnerabilityReport;
+  _id: string;
 }
 
 export interface AuditErrorResponse {
@@ -50,4 +51,12 @@ export interface ChatRequest {
 
 export interface ChatResponse {
   text: string;
+}
+
+export interface HistoryRequest {
+  id: string;
+}
+
+export interface HistoryResponse {
+  report: Vulnerability[];
 }

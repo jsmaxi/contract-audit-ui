@@ -8,12 +8,13 @@ import FAQ from "./FAQ";
 import CICD from "./CICD";
 import ThemeToggle from "./ThemeToggle";
 import AIChat from "./AIChat";
+import History from "./History";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
-import { callAuditApi, callFixApi } from "@/lib/api";
+import { callAuditApi, callFixApi, callHistoryApi } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const APP_NAME = "SmartGuard AI";
@@ -38,6 +39,7 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState("audit");
   const [cicdCode, setCicdCode] = useState("");
   const [auditCode, setAuditCode] = useState("");
+  const [auditId, setAuditId] = useState("");
 
   const getSeverityOrder = (severity: string) => {
     switch (severity) {
@@ -105,6 +107,7 @@ export default function Index() {
       );
       await new Promise((f) => setTimeout(f, 2000));
       setFindings(mockFindings);
+      setAuditId("ID123");
       toast({
         title: "Analysis Complete",
         description: `Your smart contract has been analyzed successfully`,
@@ -112,10 +115,12 @@ export default function Index() {
     } else {
       try {
         const result = await callAuditApi(code, model, language);
-        const sorted = result.vulnerabilities.sort(
+        const vulnerabilities = result.report.vulnerabilities;
+        const sorted = vulnerabilities.sort(
           (a, b) => getSeverityOrder(a.severity) - getSeverityOrder(b.severity)
         );
         setFindings(sorted);
+        setAuditId(result._id);
         toast({
           title: "Analysis Complete",
           description: `Your smart contract has been analyzed successfully`,
@@ -217,12 +222,25 @@ export default function Index() {
     }
   };
 
-  const handleSendReward = () => {
+  const handleSendReward = async () => {
     // todo
-    toast({
-      title: "Coming Soon",
-      description: "Rewards functionality - coming soon.",
-    });
+    // toast({
+    //   title: "Coming Soon",
+    //   description: "Rewards functionality - coming soon.",
+    // });
+    console.log("history", auditId);
+    const r = await callHistoryApi(auditId);
+    console.log(r);
+  };
+
+  const handleCopyAuditId = () => {
+    if (auditId) {
+      navigator.clipboard.writeText(auditId);
+      toast({
+        title: "Copied",
+        description: "Audit ID copied to clipboard",
+      });
+    }
   };
 
   const handleTriggerCICD = (code: string) => {
@@ -268,11 +286,12 @@ export default function Index() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="audit">Audit</TabsTrigger>
               <TabsTrigger value="cicd" disabled={!cicdCode}>
                 CI/CD
               </TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="audit">
@@ -318,11 +337,35 @@ export default function Index() {
                       </Button>
                     </div>
                   )}
+                  {auditId && (
+                    <div className="mb-4 p-4 bg-glass-card rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-orbitron text-white mb-1">
+                            Audit Report ID
+                          </h3>
+                          <p className="text-white/80">{auditId}</p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handleCopyAuditId}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <p className="text-sm text-white/60 mt-2">
+                        Save this ID to access your audit report later in the
+                        History tab
+                      </p>
+                    </div>
+                  )}
                   <Report
                     findings={showingPrevious ? previousFindings! : findings}
                     analysisTime={
                       showingPrevious ? previousAnalysisTime! : analysisTime
                     }
+                    isHistory={false}
                     onSendReward={handleSendReward}
                   />
                 </>
@@ -331,6 +374,9 @@ export default function Index() {
 
             <TabsContent value="cicd">
               <CICD code={cicdCode} />
+            </TabsContent>
+            <TabsContent value="history">
+              <History />
             </TabsContent>
           </Tabs>
 

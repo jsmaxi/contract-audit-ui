@@ -36,12 +36,14 @@ import { createDocument } from "@/lib/pdf";
 interface FindingsReportProps {
   findings: Vulnerability[];
   analysisTime: number;
+  isHistory: boolean;
   onSendReward?: () => void;
 }
 
 const Report = ({
   findings,
   analysisTime,
+  isHistory,
   onSendReward,
 }: FindingsReportProps) => {
   const { toast } = useToast();
@@ -286,60 +288,62 @@ const Report = ({
             </Table>
           </div>
 
-          <div className="flex flex-wrap gap-4 mt-6">
-            <Button
-              onClick={handleDownloadJSON}
-              variant="outline"
-              className="gap-2"
-            >
-              <FileJson className="w-4 h-4" />
-              Download JSON
-            </Button>
-            <Button
-              onClick={handleDownloadPDF}
-              variant="outline"
-              className="gap-2"
-            >
-              <FileText className="w-4 h-4" />
-              Download PDF
-            </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <Mail className="w-4 h-4" />
-                  Email Report
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Send Audit Report</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <Button
-                    onClick={handleEmailReport}
-                    disabled={sendingEmail}
-                    className="w-full"
-                  >
-                    Send Report
+          {!isHistory && (
+            <div className="flex flex-wrap gap-4 mt-6">
+              <Button
+                onClick={handleDownloadJSON}
+                variant="outline"
+                className="gap-2"
+              >
+                <FileJson className="w-4 h-4" />
+                Download JSON
+              </Button>
+              <Button
+                onClick={handleDownloadPDF}
+                variant="outline"
+                className="gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Download PDF
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Mail className="w-4 h-4" />
+                    Email Report
                   </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <Button
-              onClick={onSendReward}
-              variant="secondary"
-              className="gap-2 ml-auto"
-            >
-              <Send className="w-4 h-4" />
-              Send Reward
-            </Button>
-          </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Send Audit Report</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Button
+                      onClick={handleEmailReport}
+                      disabled={sendingEmail}
+                      className="w-full"
+                    >
+                      Send Report
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Button
+                onClick={onSendReward}
+                variant="secondary"
+                className="gap-2 ml-auto"
+              >
+                <Send className="w-4 h-4" />
+                Send Reward
+              </Button>
+            </div>
+          )}
         </>
       )}
     </Card>
