@@ -14,8 +14,15 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { Vulnerability, VulnerabilityReport } from "@/lib/models";
-import { callAuditApi, callFixApi, callHistoryApi } from "@/lib/api";
+import { callAuditApi, callFixApi } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const APP_NAME = "SmartGuard AI";
 const MOCK = false;
@@ -40,6 +47,7 @@ export default function Index() {
   const [cicdCode, setCicdCode] = useState("");
   const [auditCode, setAuditCode] = useState("");
   const [auditId, setAuditId] = useState("");
+  const [showRewardDialog, setShowRewardDialog] = useState(false);
 
   const getSeverityOrder = (severity: string) => {
     switch (severity) {
@@ -222,15 +230,16 @@ export default function Index() {
     }
   };
 
-  const handleSendReward = async () => {
-    // todo
-    // toast({
-    //   title: "Coming Soon",
-    //   description: "Rewards functionality - coming soon.",
-    // });
-    console.log("history", auditId);
-    const r = await callHistoryApi(auditId);
-    console.log(r);
+  const handleSendReward = () => {
+    setShowRewardDialog(true);
+  };
+
+  const handleCopyAddress = (address: string) => {
+    navigator.clipboard.writeText(address);
+    toast({
+      title: "Address Copied",
+      description: "The address has been copied to your clipboard.",
+    });
   };
 
   const handleCopyAuditId = () => {
@@ -383,6 +392,68 @@ export default function Index() {
 
           <FAQ />
           <Stats />
+
+          <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-orbitron">
+                  Send Reward
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Like our work? Send us a tip using your preferred blockchain.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="p-4 bg-background/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">EVM Address</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleCopyAddress("0x123456789...")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground break-all">
+                    0x123456789...
+                  </p>
+                </div>
+
+                <div className="p-4 bg-background/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">Flow Address</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleCopyAddress("0x123456789...")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    0x123456789...
+                  </p>
+                </div>
+
+                <div className="p-4 bg-background/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">StarkNet Address</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleCopyAddress("0x123456789...")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground break-all">
+                    0x123456789...
+                  </p>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <div className="mt-16 border-t border-white/10 pt-8">
             <div className="flex flex-wrap items-center justify-center gap-8 mb-8"></div>
