@@ -366,6 +366,7 @@ export default function Index() {
                       showingPrevious ? previousAnalysisTime! : analysisTime
                     }
                     isHistory={false}
+                    id={auditId}
                     onSendReward={handleSendReward}
                   />
                 </>

@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import Report from "./Report";
 import { Vulnerability } from "@/lib/models";
 import { callHistoryApi } from "@/lib/api";
+import Loading from "./Loading";
 
 const History = () => {
   const [reportId, setReportId] = useState("");
@@ -75,11 +76,14 @@ const History = () => {
         </Button>
       </div>
 
+      {isQuerying && <Loading />}
+
       {findings && findings.length > 0 && (
         <Report
           findings={findings}
           analysisTime={Date.now()}
           isHistory={true}
+          id={reportId}
           onSendReward={() => {}}
         />
       )}

@@ -37,6 +37,7 @@ interface FindingsReportProps {
   findings: Vulnerability[];
   analysisTime: number;
   isHistory: boolean;
+  id: string;
   onSendReward?: () => void;
 }
 
@@ -44,6 +45,7 @@ const Report = ({
   findings,
   analysisTime,
   isHistory,
+  id,
   onSendReward,
 }: FindingsReportProps) => {
   const { toast } = useToast();
@@ -113,7 +115,11 @@ const Report = ({
   const handleDownloadPDF = () => {
     if (!reportRef.current) return;
     try {
-      createDocument("doc", "test ", "smart-contract-audit-report.pdf");
+      createDocument(
+        "Smart Contract Audit Report",
+        "Use this report ID as a reference: " + id,
+        "smart-contract-audit-report.pdf"
+      );
       toast({
         title: "PDF Report Downloaded",
         description: "Audit report has been downloaded successfully.",
@@ -134,7 +140,7 @@ const Report = ({
       const sent = await sendEmail(
         email,
         "Smart Contract Audit Report",
-        "TEST"
+        "Use this report ID as a reference: " + id
       );
       if (sent) {
         toast({
@@ -205,9 +211,11 @@ const Report = ({
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-gray-400">
-            Analysis completed in {analysisTime} seconds
-          </p>
+          {!isHistory && (
+            <p className="text-gray-400">
+              Analysis completed in {analysisTime} seconds
+            </p>
+          )}
           <p className="text-gray-400">Output characters: {outputCharacters}</p>
         </div>
       </div>
