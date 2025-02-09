@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 const APP_NAME = "SmartGuard AI";
 const MOCK = false;
@@ -456,6 +457,41 @@ export default function Index() {
           </Dialog>
 
           <div className="mt-16 border-t border-white/10 pt-8">
+            <div className="flex flex-wrap items-center justify-center gap-8 mb-8">
+              <Link
+                href="https://ethglobal.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              >
+                ETHGlobal
+              </Link>
+              <Link
+                href="https://arbitrum.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              >
+                Arbitrum
+              </Link>
+              <Link
+                href="https://www.starknet.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              >
+                Starknet
+              </Link>
+              <Link
+                href="https://flow.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              >
+                Flow
+              </Link>
+            </div>
+
             <div className="flex flex-wrap items-center justify-center gap-8 mb-8"></div>
             <footer className="text-center text-sm text-white/60 font-orbitron">
               © {new Date().getFullYear()} {APP_NAME}. All rights reserved.

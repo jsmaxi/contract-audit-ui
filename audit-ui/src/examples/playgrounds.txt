@@ -1,0 +1,24 @@
+- Arbitrum Stylus:
+
+https://docs.welldonestudio.io/code/arbitrum-stylus/
+
+https://docs.arbitrum.io/stylus/quickstart
+
+- Flow Cadence: 
+
+https://play.flow.com/
+
+https://cadence-lang.org/docs/tutorial/first-steps
+
+- Starknet Cairo:
+
+https://www.cairo-lang.org/cairovm/
+
+https://docs.starknet.io/
+
+- Solidity
+
+https://remix.ethereum.org/
+
+https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html
+
