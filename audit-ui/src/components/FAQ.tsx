@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Link from "next/link";
 
 const FAQ = () => {
   return (
@@ -29,7 +30,8 @@ const FAQ = () => {
             What smart contracts do you support?
           </AccordionTrigger>
           <AccordionContent className="text-white/80">
-            We support different smart contracts.
+            Currently we support smart contracts written in Arbitrum Stylus,
+            Flow Cadence, Starknet Cairo and Solidity.
           </AccordionContent>
         </AccordionItem>
 
@@ -58,7 +60,13 @@ const FAQ = () => {
           </AccordionTrigger>
           <AccordionContent className="text-white/80">
             If you encounter any bugs or issues, please report them on our
-            GitHub repository's issue tracker.
+            GitHub repository's issue tracker:{" "}
+            <Link
+              href={"https://github.com/jsmaxi/contract-audit-agent/issues"}
+              target="_blank"
+            >
+              https://github.com/jsmaxi/contract-audit-agent/issues
+            </Link>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

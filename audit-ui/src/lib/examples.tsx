@@ -155,18 +155,75 @@ access(all) contract Types {
 
   "Starknet Cairo": [
     {
-      name: "1",
+      name: "Fibonacci",
       code: `
+#[starknet::contract]
+mod Fibonacci {
+    #[storage]
+    struct Storage {
+        n: u128,
+    }
+
+    #[generate_trait]
+    impl CalculationImpl of CalculationTrait {
+        fn calculate_fib(self: @ContractState) -> u128 {
+            fib(1, 1, self.n.read())
+        }
+    }
+
+    fn fib(a: u128, b: u128, n: u128) -> u128 {
+        match n {
+            0 => a,
+            _ => fib(b, a + b, n - 1),
+        }
+    }
+}
+
+use Fibonacci::CalculationTrait;
+
+fn main() -> u128 {
+    let mut state = Fibonacci::contract_state_for_testing();
+    state.n.write(5);
+
+    let result = state.calculate_fib();
+    result
+}
 `,
     },
     {
-      name: "2",
+      name: "Array",
       code: `
+use array::ArrayTrait;
+
+fn main() {
+    let mut a = ArrayTrait::new();
+
+    a.append(1);
+    a.append(2);
+
+    assert!(a.len() == 2, "wrong array length");
+
+    let _first_element = *a.get(0).unwrap().unbox();
+
+    let _second_element = *a.at(1);
+}
 `,
     },
     {
-      name: "3",
+      name: "Balances",
       code: `
+fn main() {
+    let mut balances: Felt252Dict<u64> = Default::default();
+
+    balances.insert('Alex', 100);
+    balances.insert('Maria', 200);
+
+    let alex_balance = balances.get('Alex');
+    assert!(alex_balance == 100, "Balance is not 100");
+
+    let maria_balance = balances.get('Maria');
+    assert!(maria_balance == 200, "Balance is not 200");
+}
 `,
     },
   ],
