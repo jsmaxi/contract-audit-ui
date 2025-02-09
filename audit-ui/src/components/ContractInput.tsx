@@ -213,8 +213,8 @@ const ContractInput = ({
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent className="bg-background">
-                <SelectItem value="Flow Cadence">Flow Cadence</SelectItem>
                 <SelectItem value="Arbitrum Stylus">Arbitrum Stylus</SelectItem>
+                <SelectItem value="Flow Cadence">Flow Cadence</SelectItem>
                 <SelectItem value="Starknet Cairo">Starknet Cairo</SelectItem>
                 <SelectItem value="Solidity">Solidity</SelectItem>
               </SelectContent>
