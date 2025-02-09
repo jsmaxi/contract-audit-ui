@@ -137,18 +137,134 @@ access(all) contract Types {
 
   "Arbitrum Stylus": [
     {
-      name: "1",
+      name: "Counter",
       code: `
+#![cfg_attr(not(any(test, feature = "export-abi")), no_main)]
+extern crate alloc;
+
+use stylus_sdk::{alloy_primitives::U256, prelude::*};
+
+sol_storage! {
+    #[entrypoint]
+    pub struct Counter {
+        uint256 number;
+    }
+}
+
+#[public]
+impl Counter {
+    pub fn number(&self) -> U256 {
+        self.number.get()
+    }
+
+    pub fn set_number(&mut self, new_number: U256) {
+        self.number.set(new_number);
+    }
+
+    pub fn mul_number(&mut self, new_number: U256) {
+        self.number.set(new_number * self.number.get());
+    }
+
+    pub fn add_number(&mut self, new_number: U256) {
+        self.number.set(new_number + self.number.get());
+    }
+
+    pub fn increment(&mut self) {
+        let number = self.number.get();
+        self.set_number(number + U256::from(1));
+    }
+}
 `,
     },
     {
-      name: "2",
+      name: "Owner",
       code: `
+#![cfg_attr(not(any(feature = "export-abi", test)), no_main)]
+extern crate alloc;
+
+use alloc::vec;
+use alloc::vec::Vec;
+
+use stylus_sdk::alloy_primitives::Address;
+use stylus_sdk::prelude::*;
+use stylus_sdk::storage::StorageAddress;
+
+const OWNER: &str = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+
+#[storage]
+#[entrypoint]
+pub struct Contract {
+    owner: StorageAddress,
+}
+
+#[public]
+impl Contract {
+    pub fn init(&mut self) -> Result<(), Vec<u8>> {
+        // Parse the const &str as a local Address variable
+        let owner_address = Address::parse_checksummed(OWNER, None).expect("Invalid address");
+
+        // Save the result as the owner
+        self.owner.set(owner_address);
+
+        Ok(())
+    }
+    pub fn owner(&self) -> Result<Address, Vec<u8>> {
+        let owner_address = self.owner.get();
+
+        Ok(owner_address)
+    }
+}
 `,
     },
     {
-      name: "3",
+      name: "Errors",
       code: `
+#![cfg_attr(not(feature = "export-abi"), no_main)]
+extern crate alloc;
+
+use alloy_sol_types::sol;
+use stylus_sdk::{abi::Bytes, alloy_primitives::{Address, U256}, call::RawCall, prelude::*};
+
+#[storage]
+#[entrypoint]
+pub struct MultiCall;
+
+sol! {
+    error ArraySizeNotMatch();
+    error CallFailed(uint256 call_index);
+}
+
+#[derive(SolidityError)]
+pub enum MultiCallErrors {
+    ArraySizeNotMatch(ArraySizeNotMatch),
+    CallFailed(CallFailed),
+}
+
+#[public]
+impl MultiCall {
+    pub fn multicall(
+        &self,
+        addresses: Vec<Address>,
+        data: Vec<Bytes>,
+    ) -> Result<Vec<Bytes>, MultiCallErrors> {
+        let addr_len = addresses.len();
+        let data_len = data.len();
+        let mut results: Vec<Bytes> = Vec::new();
+        if addr_len != data_len {
+            return Err(MultiCallErrors::ArraySizeNotMatch(ArraySizeNotMatch {}));
+        }
+        for i in 0..addr_len {
+            let result: Result<Vec<u8>, Vec<u8>> =
+                RawCall::new().call(addresses[i], data[i].to_vec().as_slice());
+            let data = match result {
+                Ok(data) => data,
+                Err(_data) => return Err(MultiCallErrors::CallFailed(CallFailed { call_index: U256::from(i) })),
+            };
+            results.push(data.into())
+        }
+        Ok(results)
+    }
+}
 `,
     },
   ],

@@ -46,7 +46,7 @@ const CICD = ({ code }: CICDProps) => {
       <div className="flex items-center gap-2">
         <Server className="w-5 h-5 text-secondary mb-5" />
         <h2 className="text-xl font-bold mb-6 text-white">
-          Contract CI/CD Pipeline
+          Contract CI/CD Pipeline [DEMO]
         </h2>
       </div>
 
