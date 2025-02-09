@@ -15,6 +15,21 @@ const History = () => {
   const [isQuerying, setIsQuerying] = useState<boolean>(false);
   const { toast } = useToast();
 
+  const getSeverityOrder = (severity: string) => {
+    switch (severity) {
+      case "critical":
+        return 0;
+      case "high":
+        return 1;
+      case "medium":
+        return 2;
+      case "low":
+        return 3;
+      default:
+        return 4;
+    }
+  };
+
   const handleSearch = async () => {
     if (!reportId.trim()) {
       toast({
@@ -33,7 +48,10 @@ const History = () => {
       console.log(r);
 
       if (r.length > 0) {
-        setFindings(r);
+        const found = r.sort(
+          (a, b) => getSeverityOrder(a.severity) - getSeverityOrder(b.severity)
+        );
+        setFindings(found);
         toast({
           title: "Report Found",
           description: "Successfully retrieved historical audit report",
